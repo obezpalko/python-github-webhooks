@@ -15,27 +15,27 @@
 # specific language governing permissions and limitations
 # under the License.
 
-import logging
-from sys import stderr, hexversion
-logging.basicConfig(stream=stderr)
 
+import logging
 import hmac
-from hashlib import sha1
+
+from sys import stderr, hexversion
+# from hashlib import sha1
 from json import loads, dumps
 from subprocess import Popen, PIPE
 from tempfile import mkstemp
 from os import access, X_OK, remove, fdopen
 from os.path import isfile, abspath, normpath, dirname, join, basename
-
-import requests
 from ipaddress import ip_address, ip_network
 from flask import Flask, request, abort
 
+import requests
 
-application = Flask(__name__)
+logging.basicConfig(stream=stderr)
+APPLICATION = Flask(__name__)
 
 
-@application.route('/', methods=['GET', 'POST'])
+@APPLICATION.route('/', methods=['GET', 'POST'])
 def index():
     """
     Main WSGI application entry.
@@ -173,18 +173,18 @@ def index():
             [s, tmpfile, event],
             stdout=PIPE, stderr=PIPE
         )
-        stdout, stderr = proc.communicate()
+        stdout, stderr_ = proc.communicate()
 
         ran[basename(s)] = {
             'returncode': proc.returncode,
             'stdout': stdout.decode('utf-8'),
-            'stderr': stderr.decode('utf-8'),
+            'stderr': stderr_.decode('utf-8'),
         }
 
         # Log errors if a hook failed
         if proc.returncode != 0:
             logging.error('{} : {} \n{}'.format(
-                s, proc.returncode, stderr
+                s, proc.returncode, stderr_
             ))
 
     # Remove temporal file
@@ -200,4 +200,4 @@ def index():
 
 
 if __name__ == '__main__':
-    application.run(debug=True, host='0.0.0.0')
+    APPLICATION.run(debug=True, host='0.0.0.0')

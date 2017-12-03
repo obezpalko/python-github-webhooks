@@ -1,7 +1,12 @@
 #!/usr/bin/env python
+"""pull all pushed changes
 
-# Python Example for Python GitHub Webhooks
-# File: push-myrepo-master
+on each push for this repo do pull
+
+From Example for Python GitHub Webhooks
+
+"""
+
 
 import sys
 import json
